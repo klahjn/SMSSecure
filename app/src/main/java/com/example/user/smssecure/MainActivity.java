@@ -15,7 +15,6 @@ public class MainActivity extends AppCompatActivity {
     public void generateKeyECC(View v){
         Intent intent = new Intent(this, GenerateKeyECCActivity.class);
         startActivity(intent);
-        this.finish();
     }
 
     public void newMessage(View v){

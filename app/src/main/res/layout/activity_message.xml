@@ -32,6 +32,7 @@
         android:layout_height="wrap_content"
         android:text="Decrypt"
         android:id="@+id/decrypt_button"
+        android:onClick="decrypt"
         android:layout_below="@+id/content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -41,6 +42,7 @@
         android:layout_height="wrap_content"
         android:text="Verify Signature"
         android:id="@+id/verify_button"
+        android:onClick="verify"
         android:layout_alignTop="@+id/decrypt_button"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />

@@ -2,6 +2,7 @@ package com.example.user.smssecure;
 
 import android.app.ListActivity;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -41,5 +43,17 @@ public class InboxActivity extends AppCompatActivity {
                 new String[] { "body", "address" }, new int[] {
                 R.id.lblMsg, R.id.lblNumber });
         listMessages.setAdapter(adapter);
+        listMessages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                TextView tMsg = (TextView) view.findViewById(R.id.lblMsg);
+                TextView tAddress = (TextView) view.findViewById(R.id.lblNumber);
+                Intent newIntent = new Intent(InboxActivity.this, MessageActivity.class);
+                newIntent.putExtra("msg", tMsg.getText());
+                newIntent.putExtra("number", tAddress.getText());
+                startActivity(newIntent);
+            }
+        });
     }
 }

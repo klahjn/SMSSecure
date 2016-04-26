@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 public class SentMessagesActivity extends AppCompatActivity {
     ListView listMessages;
@@ -41,7 +42,12 @@ public class SentMessagesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-
+                TextView tMsg = (TextView) view.findViewById(R.id.lblMsg);
+                TextView tAddress = (TextView) view.findViewById(R.id.lblNumber);
+                Intent newIntent = new Intent(SentMessagesActivity.this, MessageActivity.class);
+                newIntent.putExtra("msg", tMsg.getText());
+                newIntent.putExtra("number", tAddress.getText());
+                startActivity(newIntent);
             }
         });
     }
