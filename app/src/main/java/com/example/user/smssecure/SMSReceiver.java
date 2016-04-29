@@ -22,10 +22,10 @@ public class SMSReceiver extends BroadcastReceiver {
             Object[] pdus = (Object[]) bundle.get("pdus");
             msgs = new SmsMessage[pdus.length];
             for (int i=0; i<msgs.length; i++){
-                msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
+                msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
                 str += "SMS from " + msgs[i].getOriginatingAddress();
                 str += " :";
-                str += msgs[i].getMessageBody().toString();
+                str += msgs[i].getMessageBody();
                 str += "n";
             }
             //---display the new SMS message---

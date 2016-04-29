@@ -43,16 +43,11 @@ public class SHA1 {
         int e = h[4];
 
         int t = 0;
-        System.out.println("Besar input: " + input.length);
         for(int i = 0; i < input.length/16; i++){
             int w[] = new int[80];
             System.arraycopy(input, 0, w, 0, 16);
             for(int j = 16; j < 80; j++){
                 w[j] = cls1((w[j-3] ^ w[j-8] ^ w[j-14] ^ w[j-16]));// leftrotate 1
-            }
-            System.out.println("W: ");
-            for(int j=0; j<80; j++){
-                System.out.printf("%d : %d\n",j,w[j]);
             }
             while(t<80){
                 int ft = 0;

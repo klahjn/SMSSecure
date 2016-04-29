@@ -2,7 +2,6 @@ package com.example.user.smssecure;
 
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -14,6 +13,9 @@ import android.widget.Toast;
 
 import com.example.user.smssecure.backend.SHA1;
 import com.example.user.smssecure.backend.dalva.revariscipher.Revaris;
+import com.example.user.smssecure.backend.ecceg.ECCEG;
+
+import java.math.BigInteger;
 
 public class NewMessageActivity extends AppCompatActivity {
     Button btnSendSMS;
@@ -63,6 +65,7 @@ public class NewMessageActivity extends AppCompatActivity {
                 if (phoneNo.length()>0 && message.length()>0) {
                     if(sign.isChecked()) {
                         String privateKeyString = privateKey.getText().toString();
+                        System.out.println("Private Key:" + privateKeyString);
                         message = signMessage(message, privateKeyString);
                     }
                     if(encrypt.isChecked()){
@@ -92,12 +95,12 @@ public class NewMessageActivity extends AppCompatActivity {
     }
     private String signMessage(String message, String privateKey){
         String md = SHA1.hashString(message);
-        // TODO: encrypt md using private key and ECC algorithm
-        String mdencrypted = md;
+        // TODO: decrypt md using private key and ECC algorithm
+        String encrypt = ECCEG.encrypt(md, new BigInteger(privateKey));
         StringBuilder messagesigned = new StringBuilder();
         messagesigned.append(message);
         messagesigned.append("\n\n<ds>");
-        messagesigned.append(mdencrypted);
+        messagesigned.append(encrypt);
         messagesigned.append("</ds>");
         return messagesigned.toString();
     }
@@ -105,11 +108,10 @@ public class NewMessageActivity extends AppCompatActivity {
         String encryptedString = null;
         try {
             byte encrypted[] = Revaris.RevarisEncrypt(message.getBytes(), key);
-            encryptedString = encrypted.toString();
+            encryptedString = new String(encrypted);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("LOG:" + encryptedString);
         return encryptedString;
     }
     private void sendSMS(String phoneNumber, String message){
