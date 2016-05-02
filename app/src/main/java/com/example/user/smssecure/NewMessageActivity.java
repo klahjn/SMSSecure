@@ -1,7 +1,9 @@
 package com.example.user.smssecure;
 
 import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -173,5 +175,11 @@ public class NewMessageActivity extends AppCompatActivity {
         }
 
         sm.sendMultipartTextMessage(phoneNumber, null, parts, sentPis, delPis);
+        ContentValues values = new ContentValues();
+
+        values.put("address", phoneNumber);
+        values.put("body", message);
+
+        getApplicationContext().getContentResolver().insert(Uri.parse("content://sms/sent"),    values);
     }
 }
