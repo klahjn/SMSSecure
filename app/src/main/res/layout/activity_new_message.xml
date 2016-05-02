@@ -73,13 +73,25 @@
         android:layout_below="@+id/phone_number"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:clickable="false" />
+        android:clickable="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Browse"
+        android:id="@+id/browse_button"
+        android:onClick="browseFile"
+        android:layout_below="@+id/private_key"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/private_key"
-        android:visibility="gone"
+        android:hint="Private key"
+        android:inputType="number"
         android:layout_below="@+id/signCheckBox"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -94,14 +106,14 @@
         android:id="@+id/encryptCheckBox"
         android:checked="false"
         android:clickable="true"
-        android:layout_below="@+id/private_key"
+        android:layout_below="@+id/browse_button"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/key_encrypt"
-        android:visibility="gone"
+        android:hint="Encryption key"
         android:layout_below="@+id/encryptCheckBox"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"

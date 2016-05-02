@@ -35,7 +35,7 @@ public class Koblitz {
         return pointseq;
     }
      
-    private static Point encodeInd(BigInteger m, EllipticCurve ec, BigInteger kaux) {
+    public static Point encodeInd(BigInteger m, EllipticCurve ec, BigInteger kaux) {
         BigInteger x,y;
         Point encoded = ec.solveForY(m,kaux);
         return encoded;
@@ -53,7 +53,7 @@ public class Koblitz {
         return decoded;
     }
     
-    private static BigInteger decodeInd(Point cipherpoint, BigInteger kaux) {
+    public static BigInteger decodeInd(Point cipherpoint, BigInteger kaux) {
         System.out.println("cippoint: " + cipherpoint);
         System.out.println("decpoint: " + (cipherpoint.getX().subtract(BigInteger.ONE)).divide(kaux));
         return ((cipherpoint.getX().subtract(BigInteger.ONE)).divide(kaux)).mod(EllipticCurve.p);

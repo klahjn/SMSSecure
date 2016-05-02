@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/private_key"
-        android:layout_below="@+id/manual_button"
+        android:layout_below="@+id/private_key_textView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -28,8 +28,55 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/public_key"
+        android:layout_below="@+id/public_key_textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Key"
+        android:id="@+id/save_key"
+        android:onClick="saveKey"
+        android:layout_below="@+id/public_key"
+        android:layout_alignRight="@+id/manual_button"
+        android:layout_alignEnd="@+id/manual_button" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Private key:"
+        android:id="@+id/private_key_textView"
+        android:layout_below="@+id/manual_button"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Public key:"
+        android:id="@+id/public_key_textView"
         android:layout_below="@+id/private_key"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/file_name"
+        android:hint="Save Key As"
+        android:layout_below="@+id/save_key"
+        android:layout_toRightOf="@+id/public_key"
+        android:layout_toEndOf="@+id/public_key" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/status"
+        android:layout_below="@+id/file_name"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
 
 </RelativeLayout>

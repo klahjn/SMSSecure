@@ -21,12 +21,21 @@ public class EllipticCurve {
     public static BigInteger a;
     public static BigInteger b;
     public static BigInteger p;
+    public static BigInteger n;
     public static Point base;
     
     public EllipticCurve(BigInteger a, BigInteger b, BigInteger p) {
         this.a = a;
         this.b = b;
         this.p = p;
+    }
+
+    public void setOrder(BigInteger n) {
+        this.n = n;
+    }
+
+    public BigInteger getN() {
+        return n;
     }
     
     public void setBase(Point base) {

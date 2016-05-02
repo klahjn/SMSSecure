@@ -5,6 +5,8 @@
  */
 package com.example.user.smssecure.backend.ecceg;
 
+import android.os.Debug;
+
 import java.math.BigInteger;
 
 /**
@@ -168,49 +170,103 @@ public class ECCEG {
         return newdec;
     }
 
-    public static String encrypt(String datain, BigInteger privateKey) {
-        EllipticCurve ec = new EllipticCurve(new BigInteger("-1"), new BigInteger("188"), new BigInteger("98764321261"));
-        Point b = ec.solveForY(new BigInteger("11"), new BigInteger("20"));
+    public static String encrypt(BigInteger datain, BigInteger privateKey) {
+        System.out.println("hash encrypt: " + datain);
+//        privateKey = new BigInteger("2030457");
+//        privateKey = new BigInteger("2");
+//        Calculate e = HASH (m), where HASH is a cryptographic hash function, such as
+//        SHA-1
+//        2. Select a random integer k from [1,n − 1]
+//        3. Calculate r = x1 (mod n), where (x1, y1) = k * G. If r = 0, go to step 2
+//        4. Calculate s = k − 1(e + dA.r)(mod n). If s = 0, go to step 2
+//        5. The signature is the pair (r, s)
+//        EllipticCurve ec = new EllipticCurve(new BigInteger("-1"), new BigInteger("188"), new BigInteger("98764321261"));
+//        Point b = ec.solveForY(new BigInteger("11"), new BigInteger("20"));
+        EllipticCurve ec = new EllipticCurve(new BigInteger("-3"), new BigInteger("64210519e59c80e70fa7e9ab72243049feb8deecc146b9b1", 16), new BigInteger("6277101735386680763835789423207666416083908700390324961279"));
+        ec.setOrder(new BigInteger("6277101735386680763835789423176059013767194773182842284081"));
+        Point b = new Point(new BigInteger("188da80eb03090f67cbf20eb43a18800f4ff0afd82ff1012", 16), new BigInteger("07192b95ffc8da78631011ed6b24cdd573f977a11e794811", 16));
+//        EllipticCurve ec = new EllipticCurve(new BigInteger("2"), new BigInteger("1"), new BigInteger("5"));
+//        Point b = new Point(new BigInteger("3"), new BigInteger("3"));
         ec.setBase(b);
-
-        Point publicKey = ec.solveForY(privateKey, new BigInteger("20"));
-        Point[] encoded = Koblitz.encode(datain, ec);
-
-        Point[][] encrypted = new Point[encoded.length][2];
-        BigInteger K = Gen.generateK(ec.getP());
-        for (int x = 0; x < encoded.length; x++) {
-            encrypted[x] = encrypt(ec,encoded[x], K, publicKey);
-        }
-        String hex = Point.bytesToHex(getBytes(encrypted));
-
-        return hex;
+        BigInteger K;
+        Point h;
+        BigInteger R;
+        BigInteger s;
+        do{
+            do{
+                K = Gen.generateK(ec.getN());
+//                System.out.println("[debug] [encrypt] K1 = " + K);
+                h = ec.multiply(b,K);
+//                System.out.println("[debug] [encrypt] K2 = " + K);
+                R = h.getX().mod(ec.getN());
+//                System.out.println("[debug] [encrypt] K3 = " + K);
+            }while(R.equals(BigInteger.ZERO));
+            s = K.modInverse(ec.getN()).multiply(datain.add(R.multiply(privateKey))).
+                    mod(ec.getN());
+//            System.out.println("[debug] [encrypt] K4 = " + K);
+        }while(s.equals(BigInteger.ZERO));
+//        System.out.println("[debug] [encrypt] e = " + datain);
+//        System.out.println("[debug] [encrypt] K = " + K);
+//        System.out.println("[debug] [encrypt] h = " + h.getX() + "," + h.getY());
+//        System.out.println("[debug] [encrypt] r = " + R);
+//        System.out.println("[debug] [encrypt] S = " + s);
+        return "["+R+","+s+"]";
     }
         //NOTE: AT THIS POINT, save the encrypted data in form of byte[] from getByte().
 
         // THEN, when decrypting, create new ECCEG object and do the following:
-    public static String decrypt(String hex, BigInteger publicKeyX){
-        EllipticCurve ec = new EllipticCurve(new BigInteger("-1"), new BigInteger("188"), new BigInteger("98764321261"));
-        Point b = ec.solveForY(new BigInteger("11"), new BigInteger("20"));
+    public static boolean verify(String ds, String hashMsg, Point publicKey){
+//        Verify that r and s are integers in [1,n − 1]. If not, the signature is invalid
+//        2. Calculate e = HASH (m), where HASH is the same function used in the signature
+//                generation
+//        3. Calculate w = s −1 (mod n)
+//        4. Calculate u1 = ew (mod n) and u2 = rw (mod n)
+//        5. Calculate (x1, y1) = u1G + u2QA
+//        6. The signature is valid if x1 = r(mod n), invalid otherwise
+//        EllipticCurve ec = new EllipticCurve(new BigInteger("-1"), new BigInteger("188"), new BigInteger("98764321261"));
+        EllipticCurve ec = new EllipticCurve(new BigInteger("-3"), new BigInteger("64210519e59c80e70fa7e9ab72243049feb8deecc146b9b1", 16), new BigInteger("6277101735386680763835789423207666416083908700390324961279"));
+        ec.setOrder(new BigInteger("6277101735386680763835789423176059013767194773182842284081"));
+//        Point b = ec.solveForY(new BigInteger("11"), new BigInteger("20"));
+        Point b = new Point(new BigInteger("188da80eb03090f67cbf20eb43a18800f4ff0afd82ff1012", 16), new BigInteger("07192b95ffc8da78631011ed6b24cdd573f977a11e794811", 16));
+//        EllipticCurve ec = new EllipticCurve(new BigInteger("2"), new BigInteger("1"), new BigInteger("5"));
+//        Point b = new Point(new BigInteger("3"), new BigInteger("3"));
         ec.setBase(b);
+//        System.out.println("[debug] [verify] base: " + b.getX() + "," + b.getY());
+//        publicKey = ec.multiply(ec.getBasePoint(), new BigInteger("2030457"));
+//        publicKey = ec.multiply(ec.getBasePoint(), new BigInteger("2"));
+//        System.out.println("public key: " + publicKey.getX() + ", " + publicKey.getY());
+        String r = ds.substring(ds.indexOf('[')+1, ds.indexOf(',')).trim();
+        String s = ds.substring(ds.indexOf(',')+1, ds.indexOf(']')).trim();
+        System.out.println("[debug] [verify] rs: " + r + "," + s);
+        BigInteger bigS = new BigInteger(s);
+        BigInteger bigR = new BigInteger(r);
+        if((bigR.compareTo(ec.getN()) < 0) && (bigR.compareTo(BigInteger.ZERO) > 0)
+            && (bigS.compareTo(ec.getN()) < 0) && (bigS.compareTo(BigInteger.ZERO) > 0)) {
+            BigInteger w = bigS.modInverse(ec.getN());
+            BigInteger hash = new BigInteger(hashMsg, 16);
+//            System.out.println("hash verify: " + hash);
+            BigInteger u1 = (hash.multiply(w)).mod(ec.getN());
+            BigInteger u2 = (bigR.multiply(w)).mod(ec.getN());
 
-        byte[] bt = Point.hexToByte(hex);
-        Point[] encryptedfromFile = new Point[bt.length];
-        encryptedfromFile = Koblitz.encode(new String(bt), ec);
-        Point[] decrypted = new Point[encryptedfromFile.length/2];
-        for (int z=0; z<encryptedfromFile.length/2; z++) {
-            Point[] enc = new Point[2];
-            enc[0] = encryptedfromFile[z*2];
-            enc[1] = encryptedfromFile[z*2+1];
-            decrypted[z] = decrypt(ec,enc,publicKeyX);
-            System.out.println(decrypted[z]);
-        }
-
-        System.out.println("\ndecoding");
-        String newdec = Koblitz.decode(decrypted, new BigInteger("20"));
-
-        System.out.println();
-        System.out.println("WITHOUT doDecrypt: " + newdec);
-        return newdec;
+            Point temp1 = ec.multiply(ec.getBasePoint(), u1);
+            Point temp2 = ec.multiply(publicKey, u2);
+            Point temp = ec.add(temp1, temp2);
+//            Point huba = ec.multiply(ec.getBasePoint(), u1.add(u2.multiply(new BigInteger("2030457"))));
+//            BigInteger harusnyaS = u1.add(u2.multiply(new BigInteger("2030457"))).mod(ec.getP());
+            BigInteger t = bigR.mod(ec.getN());
+//            System.out.println("[debug] [verify] r = " + bigR);
+//            System.out.println("[debug] [verify] s = " + bigS);
+//            System.out.println("[debug] [verify] e = " + hash);
+//            System.out.println("[debug] [verify] u1 = " + u1);
+//            System.out.println("[debug] [verify] u2 = " + u2);
+//            System.out.println("[debug] [verify] harusnyaS = " + harusnyaS);
+//            System.out.println("[debug] [verify] point = " + temp.getX() + "," + temp.getY());
+//            System.out.println("[debug] [verify] huba = " + huba.getX() + "," + huba.getY());
+//            System.out.println("x = " + temp.getX());
+//            System.out.println("x mod p = " + temp.getX().mod(ec.getP()));
+//            System.out.println("t = " + t);
+            return temp.getX().mod(ec.getN()).equals(t);
+        } else return false;
     }
 
 }
